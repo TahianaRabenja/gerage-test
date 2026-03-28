@@ -1,9 +1,9 @@
 import React from 'react';
 import { useGarage } from '../context/GarageContext';
-import { Settings, Image as ImageIcon, Calendar, CheckCircle } from 'lucide-react';
+import { Settings, Calendar, CheckCircle, RefreshCw } from 'lucide-react';
 
 const History: React.FC = () => {
-  const { requests } = useGarage();
+  const { requests, isLoading, fetchRequests } = useGarage();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -17,7 +17,24 @@ const History: React.FC = () => {
 
   return (
     <div className="container">
-      <h1 className="page-title">Historique</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h1 className="page-title" style={{ margin: 0 }}>Historique</h1>
+        <button 
+          onClick={fetchRequests} 
+          disabled={isLoading}
+          style={{ background: 'none', border: 'none', color: 'var(--accent-blue-neon)', cursor: isLoading ? 'not-allowed' : 'pointer' }}
+        >
+          <RefreshCw size={20} className={isLoading ? 'spinning' : ''} style={{ animation: isLoading ? 'spin 1s linear infinite' : 'none' }} />
+        </button>
+      </div>
+
+      <style>
+        {`
+          @keyframes spin {
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
       
       {requests.length === 0 ? (
         <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)' }}>
@@ -31,11 +48,11 @@ const History: React.FC = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                 <div>
                   <h3 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: 'var(--text-primary)' }}>
-                    {req.brand} {req.model}
+                    {req.nom_client} - {req.immatriculation}
                   </h3>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                     <Calendar size={14} />
-                    {formatDate(req.createdAt)}
+                    {req.createdAt && formatDate(req.createdAt)}
                   </div>
                 </div>
                 
@@ -47,41 +64,18 @@ const History: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  backgroundColor: req.status === 'completed' ? 'rgba(0, 225, 255, 0.2)' : 'rgba(255, 165, 0, 0.2)',
-                  color: req.status === 'completed' ? 'var(--accent-blue-neon)' : '#ffa500'
+                  backgroundColor: req.status === 'En attente' ? 'rgba(255, 165, 0, 0.2)' : 'rgba(0, 225, 255, 0.2)',
+                  color: req.status === 'En attente' ? '#ffa500' : 'var(--accent-blue-neon)'
                 }}>
-                  {req.status === 'completed' && <CheckCircle size={14} />}
-                  {req.status === 'pending' ? 'En attente' : 'Terminé'}
+                  {req.status !== 'En attente' && <CheckCircle size={14} />}
+                  {req.status}
                 </div>
               </div>
 
               <div style={{ borderTop: '1px solid var(--border-color)', margin: '12px 0' }} />
 
               <div style={{ marginBottom: '8px' }}>
-                <strong>Problème : </strong> {req.briefIssue}
-              </div>
-              
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '12px' }}>
-                {req.isUrgent && (
-                  <span style={{ fontSize: '0.75rem', padding: '4px 8px', background: 'rgba(255,0,60,0.1)', color: 'var(--accent-red)', borderRadius: '4px' }}>
-                    Urgent
-                  </span>
-                )}
-                {!req.isDriveable && (
-                  <span style={{ fontSize: '0.75rem', padding: '4px 8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}>
-                    Non Roulant
-                  </span>
-                )}
-                {req.pickUpOnSite && (
-                  <span style={{ fontSize: '0.75rem', padding: '4px 8px', background: 'rgba(0,225,255,0.1)', color: 'var(--accent-blue-neon)', borderRadius: '4px' }}>
-                    À récupérer (Dépanneuse)
-                  </span>
-                )}
-                {req.photoUrl && (
-                  <span style={{ fontSize: '0.75rem', padding: '4px 8px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '4px' }}>
-                    <ImageIcon size={12} /> Photo
-                  </span>
-                )}
+                <strong>Problème : </strong> {req.description_panne}
               </div>
             </div>
           ))}

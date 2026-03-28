@@ -70,9 +70,9 @@ const Home: React.FC = () => {
             {recentRequests.map(req => (
               <div key={req.id} className="glass-panel" style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: 'var(--text-primary)' }}>{req.brand} {req.model}</h3>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Settings size={12} /> {req.briefIssue}
+                  <h3 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: 'var(--text-primary)' }}>{req.nom_client} - {req.immatriculation}</h3>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '150px' }}>
+                    <Settings size={12} /> {req.description_panne}
                   </p>
                 </div>
                 <div>
@@ -81,10 +81,10 @@ const Home: React.FC = () => {
                     borderRadius: '8px', 
                     fontSize: '0.75rem', 
                     fontWeight: 'bold',
-                    backgroundColor: req.status === 'pending' ? 'rgba(255, 165, 0, 0.2)' : 'rgba(0, 225, 255, 0.2)',
-                    color: req.status === 'pending' ? '#ffa500' : 'var(--accent-blue-neon)'
+                    backgroundColor: req.status === 'En attente' ? 'rgba(255, 165, 0, 0.2)' : 'rgba(0, 225, 255, 0.2)',
+                    color: req.status === 'En attente' ? '#ffa500' : 'var(--accent-blue-neon)'
                   }}>
-                    {req.status === 'pending' ? 'En attente' : 'Terminé'}
+                    {req.status}
                   </span>
                 </div>
               </div>
