@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import Home from './pages/Home';
 import NewRequest from './pages/NewRequest';
 import History from './pages/History';
+import InterventionMecanicien from './pages/InterventionMecanicien';
 import { Home as HomeIcon, PlusCircle, Clock } from 'lucide-react';
 import { GarageProvider } from './context/GarageContext';
 
@@ -65,6 +66,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/nouveau" element={<NewRequest />} />
               <Route path="/historique" element={<History />} />
+              <Route path="/mecanicien/nouvelle/:id" element={<InterventionMecanicien />} />
             </Routes>
           </main>
           <BottomNav />

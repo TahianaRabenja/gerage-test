@@ -24,6 +24,7 @@ interface GarageContextType {
   addRequest: (req: Omit<InterventionRequest, 'id' | 'status' | 'createdAt'>) => Promise<boolean>;
   updateRequestStatus: (id: string, status: string) => void;
   fetchRequests: () => Promise<void>;
+  addMechanicIntervention: (demande_id: string, statut: string) => Promise<boolean>;
   isLoading: boolean;
 }
 
@@ -147,8 +148,44 @@ export const GarageProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r));
   };
 
+  const addMechanicIntervention = async (demande_id: string, statut: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      const API_KEY = import.meta.env.VITE_API_KEY || import.meta.env.API_KEY;
+      const API_SECRET = import.meta.env.VITE_API_SECRET || import.meta.env.API_SECRET;
+
+      const response = await fetch('/api/resource/Intervention mecanicien', {
+        method: 'POST',
+        credentials: 'omit',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `token ${API_KEY}:${API_SECRET}`
+        },
+        body: JSON.stringify({
+          demande_intervention_vehicule: demande_id,
+          statut: statut
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Erreur création fiche mécanicien:", errorData);
+        throw new Error('Erreur API');
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erreur addMechanicIntervention:", error);
+      alert("Une erreur s'est produite lors de la création de l'intervention mécanicien.");
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <GarageContext.Provider value={{ requests, addRequest, updateRequestStatus, fetchRequests, isLoading }}>
+    <GarageContext.Provider value={{ requests, addRequest, updateRequestStatus, fetchRequests, addMechanicIntervention, isLoading }}>
       {children}
     </GarageContext.Provider>
   );

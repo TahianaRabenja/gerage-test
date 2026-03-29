@@ -1,9 +1,11 @@
 import React from 'react';
 import { useGarage } from '../context/GarageContext';
 import { Settings, Calendar, CheckCircle, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const History: React.FC = () => {
   const { requests, isLoading, fetchRequests } = useGarage();
+  const navigate = useNavigate();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -76,6 +78,16 @@ const History: React.FC = () => {
 
               <div style={{ marginBottom: '8px' }}>
                 <strong>Problème : </strong> {req.description_panne}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+                <button 
+                  onClick={() => navigate(`/mecanicien/nouvelle/${req.id}`)}
+                  className="btn-secondary"
+                  style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+                >
+                  Ouvrir Fiche Mécano
+                </button>
               </div>
             </div>
           ))}
